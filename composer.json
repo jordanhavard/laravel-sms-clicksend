@@ -1,6 +1,6 @@
 {
     "name": "parkourben99/laravel-sms-clicksend",
-    "description": "ClickSend Notifications channel for Laravel 5.4.",
+    "description": "ClickSend Notifications channel for Laravel 5.1+",
     "keywords": ["laravel", "notifications", "clicksend", "sms"],
     "homepage": "https://github.com/parkourben99/laravel-sms-clicksend",
     "license": "MIT",
@@ -10,6 +10,12 @@
             "role": "Developer",
             "email": "vlado@12345.com.au",
             "homepage": "https://github.com/vladski"
+        },
+        {
+            "name": "Benjamin Ayles",
+            "role": "Developer",
+            "email": "ben@aylessoftware.com",
+            "homepage": "https://github.com/parkourben99"
         }
     ],
     "require": {
