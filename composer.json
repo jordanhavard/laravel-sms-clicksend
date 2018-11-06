@@ -1,8 +1,8 @@
 {
-    "name": "vladski/laravel-sms-clicksend",
+    "name": "parkourben99/laravel-sms-clicksend",
     "description": "ClickSend Notifications channel for Laravel 5.4.",
     "keywords": ["laravel", "notifications", "clicksend", "sms"],
-    "homepage": "https://github.com/vladski/laravel-sms-clicksend",
+    "homepage": "https://github.com/parkourben99/laravel-sms-clicksend",
     "license": "MIT",
     "authors": [
         {
@@ -15,9 +15,9 @@
     "require": {
         "php": ">=5.6.4",
         "clicksend/clicksend-php": "4.0.*",
-        "illuminate/queue": "5.1.*|5.2.*|5.3.*|5.4.*",
-        "illuminate/notifications": "5.1.*|5.2.*|5.3.*|5.4.*",
-        "illuminate/support": "5.1.*|5.2.*|5.3.*|5.4.*"
+        "illuminate/queue": "^5.1",
+        "illuminate/notifications": "^5.1",
+        "illuminate/support": "^5.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.2",
