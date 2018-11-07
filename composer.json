@@ -44,5 +44,12 @@
     },
     "scripts": {
         "test": "vendor/bin/phpunit"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "NotificationChannels\\ClickSend\\ClickSendServiceProvider"
+            ]
+        }
     }
 }
