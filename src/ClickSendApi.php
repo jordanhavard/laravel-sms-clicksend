@@ -50,16 +50,19 @@ class ClickSendApi
      * @param $from
      * @param $to
      * @param $message
+     * @param null $delay
+     *
      * @return array
      */
-    public function sendSms($from, $to, $message)
+    public function sendSms($from, $to, $message, $delay = null)
     {
         // The payload may have more messages but we use just one at a time
         $payload = ['messages' => [
             [
-                "from"  => $from ?: $this->sms_from,
-                "to"    => $to,
-                "body"  => $message,
+                "from"      => $from ?: $this->sms_from,
+                "to"        => $to,
+                "body"      => $message,
+                "schedule"  => $delay,
             ]
         ]];
 

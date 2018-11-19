@@ -19,6 +19,13 @@ class ClickSendMessage
     public $content = '';
 
     /**
+     * Timestamp delay
+     *
+     * @var int
+     */
+    public $delay = null;
+
+    /**
      * Create a new message instance.
      *
      * @param  string $content
@@ -59,6 +66,21 @@ class ClickSendMessage
     public function from($from)
     {
         $this->from = $from;
+
+        return $this;
+    }
+
+    /**
+     * Set the delay when this should be sent
+     *
+     * Leave blank for immediate delivery.
+     *
+     * @param  string  $delay
+     * @return $this
+     */
+    public function delay($delay)
+    {
+        $this->delay = $delay;
 
         return $this;
     }
