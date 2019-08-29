@@ -40,7 +40,7 @@ class ClickSendChannel
 
         if (empty($result['success']))
         {
-            $this->events->fire(
+            $this->events->dispatch(
                 new NotificationFailed($notifiable, $notification, get_class($this), $result)
             );
 
