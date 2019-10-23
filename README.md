@@ -20,7 +20,7 @@ Uses ClickSend PHP API wrapper [https://github.com/ClickSend/clicksend-php]
 
 Install the package via composer:
 ```bash
-composer require parkourben99/laravel-sms-clicksend
+composer require superloop-ltd/laravel-sms-clicksend
 ```
 
 Add the service provider to `config/app.php`:
