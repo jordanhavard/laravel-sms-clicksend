@@ -19,7 +19,7 @@ class ClickSendServiceProvider extends ServiceProvider
 
             $config = config('services.clicksend');
 
-            return new ClickSendApi($config['username'], $config['api_key'], $config['sms_from']);
+            return new ClickSendApi($config['username'], $config['api_key']);
         });
     }
 

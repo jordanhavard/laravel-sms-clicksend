@@ -40,7 +40,6 @@ Add your ClickSend username, api_key and optional default sender sms_from to you
 'clicksend' => [
 	'username' => env('CLICKSEND_USERNAME'),
 	'api_key'  => env('CLICKSEND_API_KEY'),
-	'sms_from' => env('CLICKSEND_SMS_FROM'), // optional
 ],
 ...
 ```
@@ -89,7 +88,7 @@ class ClickSendTest extends Notification
        	// available methods:
        	
        	$message->content("SMS test to user #{$notifiable->id} with token {$this->token} by ClickSend");
-       	$message->from('+6112345678'); // override sms_from from config
+       	$message->from('+6112345678');
        	
        	return $message;
     }

@@ -8,10 +8,8 @@
 namespace NotificationChannels\ClickSend;
 
 use NotificationChannels\ClickSend\Exceptions\CouldNotSendNotification;
-
 use ClickSendLib\ClickSendClient;
 use ClickSendLib\APIException;
-
 
 class ClickSendApi
 {
@@ -24,15 +22,10 @@ class ClickSendApi
     /** @var string */
     protected $api_key;
 
-    /** @var string - default from config */
-    protected $sms_from;
-
-
-    public function __construct($username, $api_key, $sms_from)
+    public function __construct($username, $api_key)
     {
         $this->username = $username;
         $this->api_key  = $api_key;
-        $this->sms_from = $sms_from;
 
         // Prepare ClickSend client
         try {
@@ -59,7 +52,7 @@ class ClickSendApi
         // The payload may have more messages but we use just one at a time
         $payload = ['messages' => [
             [
-                "from"      => $from ?: $this->sms_from,
+                "from"      => $from,
                 "to"        => $to,
                 "body"      => $message,
                 "schedule"  => $delay,
