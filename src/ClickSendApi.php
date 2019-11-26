@@ -47,7 +47,7 @@ class ClickSendApi
      *
      * @return array
      */
-    public function sendSms($from, $to, $message, $delay = null)
+    public function sendSms($from, $to, $message, $custom = null, $delay = null)
     {
         // The payload may have more messages but we use just one at a time
         $payload = ['messages' => [
@@ -56,6 +56,7 @@ class ClickSendApi
                 "to"        => $to,
                 "body"      => $message,
                 "schedule"  => $delay,
+                "custom_string"  => $custom,
             ]
         ]];
 

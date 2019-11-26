@@ -89,6 +89,7 @@ class ClickSendTest extends Notification
        	
        	$message->content("SMS test to user #{$notifiable->id} with token {$this->token} by ClickSend");
        	$message->from('+6112345678');
+        $message->custom('123e4567-e89b-12d3-a456-426655440000'); // this can be useful for tracking message responses
        	
        	return $message;
     }

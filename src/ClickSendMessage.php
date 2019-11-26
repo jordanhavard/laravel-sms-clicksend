@@ -26,6 +26,13 @@ class ClickSendMessage
     public $delay = null;
 
     /**
+     * Custom string on the message
+     *
+     * @var string
+     */
+    public $custom = null;
+
+    /**
      * Create a new message instance.
      *
      * @param  string $content
@@ -53,6 +60,19 @@ class ClickSendMessage
     public function content($content)
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * Set the a custom string on the message
+     *
+     * @param  string  $custom
+     * @return $this
+     */
+    public function custom($custom)
+    {
+        $this->custom = $custom;
 
         return $this;
     }
