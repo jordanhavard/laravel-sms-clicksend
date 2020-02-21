@@ -22,6 +22,9 @@ class ClickSendApi
     /** @var string */
     protected $api_key;
 
+    /** @var object */
+    protected $response;
+
     public function __construct($username, $api_key)
     {
         $this->username = $username;
@@ -67,15 +70,15 @@ class ClickSendApi
         ];
 
         try {
-            $response = $this->client->getSMS()->sendSms($payload);
+            $this->response = $this->client->getSMS()->sendSms($payload);
 
             // communication error
-            if($response->response_code != 'SUCCESS') {
-                $result['message'] = $response->response_code;
+            if($this->response->response_code != 'SUCCESS') {
+                $result['message'] = $this->response->response_code;
             }
             // sending error
-            elseif ($response->data->messages[0]->status != 'SUCCESS') {
-                $result['message'] = $response->data->messages[0]->status;
+            elseif ($this->response->data->messages[0]->status != 'SUCCESS') {
+                $result['message'] = $this->response->data->messages[0]->status;
             }
             else {
                 $result['success'] = true;
@@ -104,6 +107,16 @@ class ClickSendApi
     public function getClient()
     {
         return $this->client;
+    }
+
+    /**
+     * Return the response from the client request
+     *
+     * @return object
+     */
+    public function getResponse()
+    {
+        return $this->response;
     }
 
 }
