@@ -36,7 +36,7 @@ class ClickSendChannel
         if (is_string($message)) $message = new ClickSendMessage($message);
 
         // array [success, message, data]
-        $result = $this->client->sendSms($message->from, $to, $message->content, $message->custom, $message->delay); //dd($result);
+        $result = $this->client->sendSms($message->from, $to, $message->content, $message->custom, $message->delay);
 
         if (empty($result['success']))
         {
