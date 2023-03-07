@@ -1,5 +1,5 @@
 {
-  "name": "superloop-ltd/laravel-sms-clicksend",
+  "name": "jordanhavard/laravel-sms-clicksend",
   "description": "ClickSend Notifications channel for Laravel 5.1+",
   "keywords": [
     "laravel",
@@ -7,7 +7,7 @@
     "clicksend",
     "sms"
   ],
-  "homepage": "https://github.com/superloop-ltd/laravel-sms-clicksend",
+  "homepage": "https://github.com/jordanhavard/laravel-sms-clicksend",
   "license": "MIT",
   "authors": [
     {
