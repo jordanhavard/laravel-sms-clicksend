@@ -37,4 +37,13 @@ class ClickSendMessageTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('John_Doe', $message->from);
     }
+
+    /** @test */
+    public function it_can_set_the_to()
+    {
+        $message = (new ClickSendMessage())->to('1234567890');
+
+        $this->assertEquals('1234567890', $message->to);
+    }
+
 }

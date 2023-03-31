@@ -66,6 +66,33 @@ class ClickSendChannelTest extends \PHPUnit_Framework_TestCase
             new TestNotifiableWithoutRouteNotificationForSmscru(), new TestNotification()
         );
     }
+
+    /** @test */
+    public function it_throws_exception_if_unexpected_object_passed_to_sendManySms()
+    {
+        $this->expectException(CouldNotSendNotification::class);
+
+        $messages = [[(object)["to"] => "1234567890", "message" => "test"]];
+
+        $this->smsc->sendManySms(
+            $messages
+        );
+    }
+
+    /** @test */
+    public function it_throws_exception_if_too_many_objects_passed_to_sendManySms()
+    {
+        $this->expectException(CouldNotSendNotification::class);
+
+        $messages = [];
+        for($c=0;$c<1001;$c++){
+            $messages[] = new ClickSendMessage();
+        }
+        
+        $this->smsc->sendManySms(
+            $messages
+        );
+    }
 }
 
 class TestNotifiable
