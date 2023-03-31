@@ -55,6 +55,7 @@ class ClickSendApi
         if ($return["success"]){
             $return['message'] = 'Message sent successfully.';
         }
+        unset($return["failures"]);
 
         return $return;
     }
