@@ -44,8 +44,8 @@ Use ClickSendChannel in `via()` method inside your notification classes. Example
 namespace App\Notifications;
 
 use Illuminate\Notifications\Notification;
-use NotificationChannels\ClickSend\ClickSendMessage;
-use NotificationChannels\ClickSend\ClickSendChannel;
+use JordanHavard\ClickSend\ClickSendMessage;
+use JordanHavard\ClickSend\ClickSendChannel;
 
 class ClickSendTest extends Notification
 {
