@@ -35,6 +35,6 @@ class CouldNotSendNotification extends Exception
      */
     public static function notAClickSendMessageObject()
     {
-        return new static("Each message object must be of type NotificationChannels\ClickSend\ClickSendMessage");
+        return new static("Each message object must be of type JordanHavard\ClickSend\ClickSendMessage");
     }
 }
