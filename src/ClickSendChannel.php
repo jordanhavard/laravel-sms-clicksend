@@ -38,7 +38,7 @@ class ClickSendChannel
         // array [success, message, data]
         $result = $this->client->sendSms($message->from, $to, $message->content, $message->custom, $message->delay);
 
-        if ($id = ($this->client->getResponse()->data->messages[0]->message_id ?? '123')) {
+        if ($id = ($this->client->getResponse()->data->messages[0]->message_id ?? null)) {
             $notification->id = $id;
         }
 
