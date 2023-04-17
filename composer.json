@@ -43,10 +43,6 @@
   "config": {
     "extra": {
       "sort-packages": true
-    },
-    "allow-plugins": {
-      "pestphp/pest-plugin": false,
-      "phpstan/extension-installer": false
     }
   },
   "scripts": {
@@ -55,7 +51,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "NotificationChannels\\ClickSend\\ClickSendServiceProvider"
+        "JordanHavard\\ClickSend\\ClickSendServiceProvider"
       ]
     }
   }
