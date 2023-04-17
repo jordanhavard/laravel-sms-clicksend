@@ -1,6 +1,6 @@
 <?php
 
-namespace NotificationChannels\ClickSend;
+namespace JordanHavard\ClickSend;
 
 use Illuminate\Support\ServiceProvider;
 

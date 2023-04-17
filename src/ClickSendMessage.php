@@ -1,6 +1,6 @@
 <?php
 
-namespace NotificationChannels\ClickSend;
+namespace JordanHavard\ClickSend;
 
 class ClickSendMessage
 {
@@ -35,7 +35,7 @@ class ClickSendMessage
     /**
      * Create a new message instance.
      *
-     * @param  string $content
+     * @param  string  $content
      * @return static
      */
     public static function create($content = '')
@@ -86,6 +86,19 @@ class ClickSendMessage
     public function from($from)
     {
         $this->from = $from;
+
+        return $this;
+    }
+
+    /**
+     * Set the phone number the message should be sent to.
+     *
+     * @param  string  $to
+     * @return $this
+     */
+    public function to($to)
+    {
+        $this->to = $to;
 
         return $this;
     }

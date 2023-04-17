@@ -1,15 +1,16 @@
 <?php
 
-namespace NotificationChannel\ClickSend\Tests;
+namespace JordanHavard\ClickSend\Test;
 
-use Mockery as M;
-use Illuminate\Notifications\Notification;
-use NotificationChannels\ClickSend\ClickSendApi;
-use NotificationChannels\ClickSend\ClickSendChannel;
-use NotificationChannels\ClickSend\ClickSendMessage;
-use NotificationChannels\ClickSend\Exceptions\CouldNotSendNotification;
+use Exception;
+use Illuminate\Events\Dispatcher;
+use JordanHavard\ClickSend\ClickSendApi;
+use JordanHavard\ClickSend\ClickSendChannel;
+use JordanHavard\ClickSend\ClickSendMessage;
+use JordanHavard\ClickSend\Exceptions\CouldNotSendNotification;
+use Mockery;
 
-class ClickSendChannelTest extends \PHPUnit_Framework_TestCase
+class ClickSendChannelTest extends TestCase
 {
     /**
      * @var ClickSendApi
@@ -26,68 +27,119 @@ class ClickSendChannelTest extends \PHPUnit_Framework_TestCase
      */
     private $channel;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->smsc = M::mock(ClickSendApi::class, ['test', 'test', 'John_Doe']);
-        $this->channel = new ClickSendChannel($this->smsc);
-        $this->message = M::mock(ClickSendMessage::class);
+        $this->smsc = Mockery::mock(new ClickSendApi('username', 'APIKEY'));
+        $this->channel = new ClickSendChannel($this->smsc, new Dispatcher());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
-        M::close();
-
         parent::tearDown();
     }
 
     /** @test */
     public function it_can_send_a_notification()
     {
-        $this->smsc->shouldReceive('send')->once()
-            ->with(
-                [
-                    'phones'  => '+1234567890',
-                    'mes'     => 'hello',
-                    'sender'  => 'John_Doe',
-                ]
-            );
+        $this->smsc->shouldReceive('sendSms')
+            ->once()
+            ->andReturn([
+                'success' => true,
+                'message' => 'Message sent successfully.',
+                'data' => [
+                    'from' => 'Test Suite',
+                    'to' => '+61422222222',
+                    'body' => 'Message content',
+                    'schedule' => null,
+                    'custom_string' => null,
+                ],
+            ]);
 
-        $this->channel->send(new TestNotifiable(), new TestNotification());
+        $this->channel->send(
+            new TestNotifiable(), new TestNotification()
+        );
     }
 
     /** @test */
-    public function it_does_not_send_a_message_when_to_missed()
+    public function it_throws_an_exception_if_result_is_not_set()
+    {
+        $this->smsc->shouldReceive('sendSms')
+            ->once()
+            ->andReturn([
+                'message' => 'Some error',
+            ]);
+
+        $this->smsc->shouldReceive('getResponse')
+            ->once()
+            ->andReturn((object) [
+                'success' => false,
+                'message' => 'Some error',
+                'data' => (object) [
+                    'messages' => [
+                        (object) [
+                            'message_id' => 'foobar',
+                        ],
+                    ],
+                ],
+            ]);
+
+        $this->expectException(Exception::class);
+
+        $this->channel->send(
+            new TestNotifiable(), new TestNotification()
+        );
+    }
+
+    /** @test */
+    public function it_throws_exception_if_unexpected_object_passed_to_sendManySms()
     {
         $this->expectException(CouldNotSendNotification::class);
 
-        $this->channel->send(
-            new TestNotifiableWithoutRouteNotificationForSmscru(), new TestNotification()
+        $messages = [(object) ['to' => '1234567890', 'message' => 'test']];
+
+        $this->smsc->sendManySms(
+            $messages
+        );
+    }
+
+    /** @test */
+    public function it_throws_exception_if_too_many_objects_passed_to_sendManySms()
+    {
+        $this->expectException(CouldNotSendNotification::class);
+
+        $messages = [];
+        for ($c = 0; $c < 1001; $c++) {
+            $messages[] = new ClickSendMessage();
+        }
+
+        $this->smsc->sendManySms(
+            $messages
         );
     }
 }
 
 class TestNotifiable
 {
-    public function routeNotificationFor()
+    public function routeNotificationForClicksend()
     {
-        return '+1234567890';
+        return '+61411111111';
     }
 }
 
 class TestNotifiableWithoutRouteNotificationForSmscru extends TestNotifiable
 {
-    public function routeNotificationFor()
+    public function routeNotificationForClicksend()
     {
         return false;
     }
 }
 
-class TestNotification extends Notification
+class TestNotification extends \Illuminate\Notifications\Notification
 {
     public function toClickSend()
     {
-        return ClickSendMessage::create('hello')->from('John_Doe');
+        return (new ClickSendMessage('messageContent'))->from('fromNumber');
     }
 }

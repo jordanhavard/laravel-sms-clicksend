@@ -1,6 +1,12 @@
-/vendor
-/build
-composer.phar
+.idea
+.phpunit.result.cache
+.phpunit.result.cache/*
+build
 composer.lock
-
-\.idea/
+coverage
+docs
+phpunit.xml
+phpstan.neon
+testbench.yaml
+vendor
+node_modules

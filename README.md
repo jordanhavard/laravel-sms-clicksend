@@ -1,6 +1,6 @@
 # ClickSend notifications channel for Laravel 5.1+
 
-This package makes it easy to send notifications using [clicksend.com](//clicksend.com) with Laravel 5.1+.
+This package makes it easy to send notifications using [clicksend.com](//clicksend.com) with Laravel 9.x.
 Uses ClickSend PHP API wrapper [https://github.com/ClickSend/clicksend-php]
 
 ## Contents
@@ -23,15 +23,7 @@ Install the package via composer:
 composer require superloop-ltd/laravel-sms-clicksend
 ```
 
-Add the service provider to `config/app.php`:
-```php
-...
-'providers' => [
-    ...
-    NotificationChannels\ClickSend\ClickSendServiceProvider::class,
-],
-...
-```
+The package will be auto discovered.
 
 Add your ClickSend username, api_key and optional default sender sms_from to your `config/services.php`:
 
