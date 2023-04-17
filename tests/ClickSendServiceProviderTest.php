@@ -17,7 +17,7 @@ class ClickSendServiceProviderTest extends TestCase
     /** @var Repository|MockInterface */
     private $configMock;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
