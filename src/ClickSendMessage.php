@@ -12,6 +12,13 @@ class ClickSendMessage
     public $from = '';
 
     /**
+     * The phone number the message should be sent to.
+     *
+     * @var string
+     */
+    public $to = '';
+
+    /**
      * The message content.
      *
      * @var string

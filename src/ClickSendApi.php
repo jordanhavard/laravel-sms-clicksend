@@ -57,6 +57,22 @@ class ClickSendApi
         return $return;
     }
 
+    public function sendSms($from, $to, $message, $custom = null, $delay = null)
+    {
+        $sms = (new ClickSendMessage($message))->from($from)->to($to)->delay($delay)->custom($custom);
+        
+        $return = $this->sendManySms([$sms]);
+        // Keep the same output signature as previous iterations of sendSms(...) so we don't
+        // introduce breaking changes
+        $return["data"] = $return["data"][0];
+        if ($return["success"]){
+            $return['message'] = 'Message sent successfully.';
+        }
+        unset($return["failures"]);
+
+        return $return;
+    }
+
     /**
      * @param  array  $messages - array of ClickSendMessage to send
      * @return array
@@ -82,6 +98,15 @@ class ClickSendApi
             ];
         }
 
+            $payload['messages'][] = [
+                "from"      => $sms->from,
+                "to"        => $sms->to,
+                "body"      => $sms->content,
+                "schedule"  => $sms->delay,
+                "custom_string"  => $sms->custom,
+            ];
+        }
+        
         $result = [
             'success' => false,
             'message' => '',

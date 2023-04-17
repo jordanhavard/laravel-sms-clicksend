@@ -47,6 +47,7 @@ class CouldNotSendNotification extends Exception
      * Thrown when you try to send too many bulk SMS'. ClickSend API limits messages to 1000
      *
      * @param  Exception  $exception
+     *
      * @return static
      */
     public static function tooManyBulkSMSMessages()
