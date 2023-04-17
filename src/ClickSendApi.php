@@ -7,8 +7,8 @@
 
 namespace JordanHavard\ClickSend;
 
-use ClickSendLib\APIException;
-use ClickSendLib\ClickSendClient;
+use Exception;
+use JordanHavard\ClickSend\Exceptions\APIException;
 use JordanHavard\ClickSend\Exceptions\CouldNotSendNotification;
 
 class ClickSendApi
@@ -33,11 +33,7 @@ class ClickSendApi
         $this->api_key = $api_key;
 
         // Prepare ClickSend client
-        try {
-            $this->client = new ClickSendClient($username, $api_key);
-        } catch (APIException $exception) {
-            throw CouldNotSendNotification::couldNotCommunicateWithClicksend($exception);
-        }
+        $this->client = new ClickSendClient($username, $api_key);
 
     }
 
@@ -52,7 +48,7 @@ class ClickSendApi
         if ($return['success']) {
             $return['message'] = 'Message sent successfully.';
         }
-        unset($return['failures']);
+//        unset($return['failures']);
 
         return $return;
     }
@@ -73,6 +69,10 @@ class ClickSendApi
                 throw CouldNotSendNotification::notAClickSendMessageObject();
             }
 
+            if (strlen($sms->content) > 1000) {
+                throw CouldNotSendNotification::contentLengthLimitExceeded();
+            }
+
             $payload['messages'][] = [
                 'from' => $sms->from,
                 'to' => $sms->to,
@@ -81,7 +81,7 @@ class ClickSendApi
                 'custom_string' => $sms->custom,
             ];
         }
-        
+
         $result = [
             'success' => false,
             'message' => '',
@@ -91,65 +91,38 @@ class ClickSendApi
 
         try {
             $this->response = $this->client->getSMS()->sendSms($payload);
-            // communication error
-            if ($this->response->response_code != 'SUCCESS') {
-                $result['message'] = $this->response->response_code;
-            } else {
-                // checked how many got through
-                $worked = 0;
-                foreach ($this->response->data->messages as $message_response) {
-                    if ($message_response->status == 'SUCCESS') {
-                        $worked++;
-                    } else {
-                        // populate the message value for the first error only to
-                        // prevent breaking changes
-                        if ($result['message'] == '') {
-                            $result['message'] = $message_response->status;
-                        }
-
-                        if (! isset($result['failures'][$message_response->status])) {
-                            $result['failures'][$message_response->status] = [];
-                        }
-                        $result['failures'][$message_response->status][] =
-                            (new ClickSendMessage($message_response->body))
-                            ->to($message_response->to);
+            // checked how many got through
+            $worked = 0;
+            foreach ($this->response->data->messages as $message_response) {
+                if ($message_response->status == 'SUCCESS') {
+                    $worked++;
+                } else {
+                    // populate the message value for the first error only to
+                    // prevent breaking changes
+                    if ($result['message'] == '') {
+                        $result['message'] = $message_response->status;
                     }
+
+                    if (! isset($result['failures'][$message_response->status])) {
+                        $result['failures'][$message_response->status] = [];
+                    }
+                    $result['failures'][$message_response->status][] =
+                        (new ClickSendMessage($message_response->body))
+                        ->to($message_response->to);
                 }
-                if ($worked == count($messages)) {
-                    $result['success'] = true;
-                    $result['message'] = 'Messages sent successfully.';
-                }
+            }
+            if ($worked == count($messages)) {
+                $result['success'] = true;
+                $result['message'] = 'Messages sent successfully.';
+            } else {
+                $result['message'] = (count($messages) - $worked).' out of '.count($messages).' messages failed to send';
             }
         }
         // clicksend API error
-        catch (APIException $exception) {
-            $result['message'] = $exception->getReason();
-        }
-        // any php error
-        catch (\Exception $exception) {
+        catch (APIException|Exception $exception) {
             $result['message'] = $exception->getMessage();
         }
 
         return $result;
-    }
-
-    /**
-     * Return Client for accessing all other api functions
-     *
-     * @return ClickSendClient
-     */
-    public function getClient()
-    {
-        return $this->client;
-    }
-
-    /**
-     * Return the response from the client request
-     *
-     * @return object
-     */
-    public function getResponse()
-    {
-        return $this->response;
     }
 }

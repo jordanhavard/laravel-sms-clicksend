@@ -2,14 +2,42 @@
 
 namespace JordanHavard\ClickSend\Test;
 
-use Mockery;
+use Illuminate\Events\Dispatcher;
+use JordanHavard\ClickSend\ClickSendApi;
+use JordanHavard\ClickSend\ClickSendChannel;
+use JordanHavard\ClickSend\ClickSendMessage;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-    protected function tearDown(): void
-    {
-        parent::tearDown();
+    /**
+     * @var ClickSendApi
+     */
+    private $smsc;
 
-        Mockery::close();
+    /**
+     * @var ClickSendMessage
+     */
+    private $message;
+
+    /**
+     * @var ClickSendChannel
+     */
+    private $channel;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->smsc = new ClickSendApi('username', 'apikey');
+        $this->channel = new ClickSendChannel($this->smsc, new Dispatcher());
+    }
+
+    protected function sendSms()
+    {
+        return $this->smsc->sendSms(
+            'Test suite',
+            '+61411111111',
+            'This is a test 555'
+        );
     }
 }
