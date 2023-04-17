@@ -1,41 +1,30 @@
-name: fix code styling
+name: Coding Style
 
-on:
-  workflow_call:
-    inputs:
-      php:
-        default: "8.1"
-        type: string
-      message:
-        default: Fix code styling
-        type: string
-      fix:
-        default: true
-        type: boolean
+on: ['push']
 
 jobs:
-  lint:
+  cs:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.1']
+        dependency-version: [prefer-stable]
+
+    name: PHP ${{ matrix.php }} - ${{ matrix.dependency-version }} - ${{ matrix.parallel }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ inputs.php }}
-          extensions: json, dom, curl, libxml, mbstring
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
           coverage: none
 
-      - name: Install Pint
-        run: composer global require laravel/pint
+      - name: Install PHP dependencies
+        run: composer update --${{ matrix.dependency-version }} --no-interaction --no-progress
 
       - name: Run Pint
-        run: pint
-
-      - name: Commit linted files
-        if: ${{ inputs.fix }}
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: ${{ inputs.message }}
+        run: php vendor/bin/pint --test -v
