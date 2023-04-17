@@ -172,8 +172,6 @@ class ClickSendChannelTest extends TestCase
 
         $response = $this->smsc->sendManySms($messages);
 
-        ray($response);
-
         $this->assertFalse($response['success']);
     }
 
@@ -203,13 +201,11 @@ class ClickSendChannelTest extends TestCase
             $message .= fake()->word();
         }
 
-        $res = $this->smsc->sendSms(
+        $this->smsc->sendSms(
             'Test suite',
             '+61411111111',
             $message
         );
-
-        ray($res);
     }
 
     /** @test */
