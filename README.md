@@ -1,4 +1,4 @@
-# ClickSend notifications channel for Laravel 5.1+
+# ClickSend notifications channel for Laravel 9+
 
 This package makes it easy to send notifications using [clicksend.com](//clicksend.com) with Laravel 9.x.
 Uses ClickSend PHP API wrapper [https://github.com/ClickSend/clicksend-php]
