@@ -6,6 +6,7 @@ use Illuminate\Events\Dispatcher;
 use JordanHavard\ClickSend\ClickSendApi;
 use JordanHavard\ClickSend\ClickSendChannel;
 use JordanHavard\ClickSend\ClickSendMessage;
+use JordanHavard\ClickSend\ClickSendServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -30,6 +31,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $this->smsc = new ClickSendApi('username', 'apikey');
         $this->channel = new ClickSendChannel($this->smsc, new Dispatcher());
+    }
+
+    protected function getPackageProviders($app): array
+    {
+        return [
+            ClickSendServiceProvider::class,
+        ];
     }
 
     protected function sendSms()
