@@ -29,25 +29,31 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | White List testing number
+    |--------------------------------------------------------------------------
+    |
+    | Set this option will replace any numbers not in a specified whitelist
+    | with the ClickSend testing number. This will still record and return
+    | a response in the ClickSend dashboard but will not incur any charges
+    |
+    */
+
+    'whitelist_testing_number' => env('CLICKSEND_WHITELIST_ENABLED', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Environment-specific white lists
     |--------------------------------------------------------------------------
     |
-    | This section allows you to define environment-specific white lists.
-    | Each environment can have its own set of phone numbers that are allowed
-    | to receive messages. If the current environment matches one of the keys
-    | below, the corresponding white list will be used.
+    | This comma separated list allows a definition environment-specific whitelists.
+    | Each environment can have its own set of phone numbers that will allow delivery.
+    | An exception is thrown if whitelist_enabled is true but no matching environment is present
     |
     */
 
     'whitelists' => [
 
-        'local' => [
-            '+61411111111',
-        ],
-
-        'staging' => [
-            '+61422222222',
-        ],
+        'local' => env('CLICKSEND_LOCAL_WHITELIST_NUMBERS', '+61411111111'),
 
     ],
 
