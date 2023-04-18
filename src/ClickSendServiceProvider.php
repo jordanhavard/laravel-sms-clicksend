@@ -3,6 +3,7 @@
 namespace JordanHavard\ClickSend;
 
 use Illuminate\Support\ServiceProvider;
+use function config;
 
 class ClickSendServiceProvider extends ServiceProvider
 {
@@ -26,9 +27,10 @@ class ClickSendServiceProvider extends ServiceProvider
 
         $this->app->singleton(ClickSendApi::class, function () {
 
-            $config = config('services.clicksend');
+            $username = config('clicksend.username');
+            $api_key = config('clicksend.api_key');
 
-            return new ClickSendApi($config['username'], $config['api_key']);
+            return new ClickSendApi($username, $api_key);
         });
     }
 

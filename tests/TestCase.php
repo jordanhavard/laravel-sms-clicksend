@@ -10,20 +10,22 @@ use JordanHavard\ClickSend\ClickSendServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
+//    protected $enablesPackageDiscoveries = true;
+
     /**
      * @var ClickSendApi
      */
-    private $smsc;
+    protected $smsc;
 
     /**
      * @var ClickSendMessage
      */
-    private $message;
+    protected $message;
 
     /**
      * @var ClickSendChannel
      */
-    private $channel;
+    protected $channel;
 
     public function setUp(): void
     {
@@ -40,12 +42,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
         ];
     }
 
-    protected function sendSms()
-    {
-        return $this->smsc->sendSms(
-            'Test suite',
-            '+61411111111',
-            'This is a test 555'
-        );
+    protected function sendSms(
+        $message = 'This is a message',
+        $to = '+61411111111',
+        $from = 'Test suite',
+    ) {
+        return $this->smsc->sendSms($from, $to, $message);
     }
 }

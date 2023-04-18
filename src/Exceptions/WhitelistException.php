@@ -6,9 +6,8 @@ use Exception;
 
 class WhitelistException extends Exception
 {
-    public static function numberNotOnWhitelist()
+    public static function whitelistHasNotBeenSet()
     {
-        return new static('The number provided is not on the whitelist',403);
+        return new static('No whitelist found for current environment',422);
     }
-
 }

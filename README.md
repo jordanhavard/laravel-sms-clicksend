@@ -112,7 +112,7 @@ catch (\Exception $e) {
 }
 ```
 
-## Events
+## Events (Not yet implemented)
 Following events are triggered by Notification. By default:
 - Illuminate\Notifications\Events\NotificationSending
 - Illuminate\Notifications\Events\NotificationSent
