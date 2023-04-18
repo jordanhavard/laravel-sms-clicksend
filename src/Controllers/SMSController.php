@@ -40,11 +40,6 @@ class SMSController extends BaseController
     public function sendSms(
         $messages
     ) {
-        //check that all required arguments are provided
-        if (! isset($messages)) {
-            throw new \InvalidArgumentException('One or more required arguments were NULL.');
-        }
-
         //the base uri for api requests
         $_queryBuilder = Configuration::$BASEURI;
 
