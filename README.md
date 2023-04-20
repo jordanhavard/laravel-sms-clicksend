@@ -25,15 +25,10 @@ composer require jordanhavard/laravel-sms-clicksend
 
 The package will be auto discovered.
 
-Add your ClickSend username, api_key and optional default sender sms_from to your `config/services.php`:
+Publish the `config/clicksend.php` configuration file using the command below
 
 ```php
-...
-'clicksend' => [
-	'username' => env('CLICKSEND_USERNAME'),
-	'api_key'  => env('CLICKSEND_API_KEY'),
-],
-...
+php artisan vendor:publish --provider="JordanHavard\ClickSend\ClickSendServiceProvider"
 ```
 
 ## Usage
@@ -112,7 +107,7 @@ catch (\Exception $e) {
 }
 ```
 
-## Events
+## Events (Not yet implemented)
 Following events are triggered by Notification. By default:
 - Illuminate\Notifications\Events\NotificationSending
 - Illuminate\Notifications\Events\NotificationSent
@@ -195,7 +190,7 @@ protected $listen = [
 ```
 
 
-## API Client
+## API Client (not yet implemented)
 
 To access the rest of ClickSend API you can get client from ClickSendApi:
 ```php

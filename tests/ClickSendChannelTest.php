@@ -4,6 +4,7 @@ namespace JordanHavard\ClickSend\Test;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use JordanHavard\ClickSend\ClickSendApi;
 use JordanHavard\ClickSend\ClickSendChannel;
 use JordanHavard\ClickSend\ClickSendMessage;
@@ -16,17 +17,17 @@ class ClickSendChannelTest extends TestCase
     /**
      * @var ClickSendApi
      */
-    private $smsc;
+    protected $smsc;
 
     /**
      * @var ClickSendMessage
      */
-    private $message;
+    protected $message;
 
     /**
      * @var ClickSendChannel
      */
-    private $channel;
+    protected $channel;
 
     public function setUp(): void
     {
@@ -53,6 +54,7 @@ class ClickSendChannelTest extends TestCase
                     'messages' => [
                         [
                             'status' => 'SUCCESS',
+                            'message_id' => Str::uuid(),
                         ],
                     ],
                 ],
@@ -77,6 +79,7 @@ class ClickSendChannelTest extends TestCase
                     'messages' => [
                         [
                             'status' => 'SUCCESS',
+                            'message_id' => Str::uuid(),
                         ],
                     ],
                 ],
@@ -101,6 +104,8 @@ class ClickSendChannelTest extends TestCase
                     'messages' => [
                         [
                             'status' => 'ERROR',
+                            'message_id' => Str::uuid(),
+
                         ],
                     ],
                 ],
@@ -127,11 +132,14 @@ class ClickSendChannelTest extends TestCase
                             'status' => 'SUCCESS',
                             'body' => 'testing message for success',
                             'to' => '+61422222222',
+                            'message_id' => Str::uuid(),
                         ],
                         [
                             'status' => 'FAILED',
                             'body' => 'testing message for failure',
                             'to' => '+61433333333',
+                            'message_id' => Str::uuid(),
+
                         ],
                     ],
                 ],
@@ -162,6 +170,8 @@ class ClickSendChannelTest extends TestCase
                             'status' => 'FAILED',
                             'body' => 'testing message for failure',
                             'to' => '+61433333333',
+                            'message_id' => Str::uuid(),
+
                         ],
                     ],
                 ],

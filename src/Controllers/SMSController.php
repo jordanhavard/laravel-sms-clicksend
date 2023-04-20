@@ -4,9 +4,9 @@ namespace JordanHavard\ClickSend\Controllers;
 
 use ClickSendLib\APIHelper;
 use ClickSendLib\Configuration;
+use Exception;
 use Illuminate\Support\Facades\Http;
 use JordanHavard\ClickSend\Exceptions\APIException;
-use JordanHavard\ClickSend\Models\SmsMessage;
 
 class SMSController extends BaseController
 {
@@ -30,16 +30,10 @@ class SMSController extends BaseController
     }
 
     /**
-     * @todo Add general description for this endpoint
-     *
-     * @param  SmsMessage  $messages TODO: type description here
-     * @return string response from the API call
-     *
-     * @throws APIException|\Unirest\Exception Thrown if API call fails
+     * @throws APIException|Exception Thrown if API call fails
      */
-    public function sendSms(
-        $messages
-    ) {
+    public function sendSms(array $messages)
+    {
         //the base uri for api requests
         $_queryBuilder = Configuration::$BASEURI;
 
