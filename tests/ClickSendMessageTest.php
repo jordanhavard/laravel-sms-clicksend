@@ -1,10 +1,10 @@
 <?php
 
-namespace NotificationChannels\ClickSend\Test;
+namespace JordanHavard\ClickSend\Test;
 
-use NotificationChannels\ClickSend\ClickSendMessage;
+use JordanHavard\ClickSend\ClickSendMessage;
 
-class ClickSendMessageTest extends \PHPUnit_Framework_TestCase
+class ClickSendMessageTest extends TestCase
 {
     /** @test */
     public function it_can_accept_a_content_when_constructing_a_message()
@@ -46,4 +46,19 @@ class ClickSendMessageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('1234567890', $message->to);
     }
 
+    /** @test */
+    public function it_can_set_a_custom_string()
+    {
+        $message = (new ClickSendMessage())->custom('123e4567-e89b-12d3-a456-426655440000');
+
+        $this->assertEquals('123e4567-e89b-12d3-a456-426655440000', $message->custom);
+    }
+
+    /** @test */
+    public function it_can_set_the_delay()
+    {
+        $message = (new ClickSendMessage())->delay('60');
+
+        $this->assertEquals('60', $message->delay);
+    }
 }

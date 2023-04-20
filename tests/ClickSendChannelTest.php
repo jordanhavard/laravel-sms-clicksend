@@ -1,82 +1,188 @@
 <?php
 
-namespace NotificationChannel\ClickSend\Tests;
+namespace JordanHavard\ClickSend\Test;
 
-use Mockery as M;
-use Illuminate\Notifications\Notification;
-use NotificationChannels\ClickSend\ClickSendApi;
-use NotificationChannels\ClickSend\ClickSendChannel;
-use NotificationChannels\ClickSend\ClickSendMessage;
-use NotificationChannels\ClickSend\Exceptions\CouldNotSendNotification;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use JordanHavard\ClickSend\ClickSendApi;
+use JordanHavard\ClickSend\ClickSendChannel;
+use JordanHavard\ClickSend\ClickSendMessage;
+use JordanHavard\ClickSend\Exceptions\CouldNotSendNotification;
+use Mockery;
+use stdClass;
 
-class ClickSendChannelTest extends \PHPUnit_Framework_TestCase
+class ClickSendChannelTest extends TestCase
 {
     /**
      * @var ClickSendApi
      */
-    private $smsc;
+    protected $smsc;
 
     /**
      * @var ClickSendMessage
      */
-    private $message;
+    protected $message;
 
     /**
      * @var ClickSendChannel
      */
-    private $channel;
+    protected $channel;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->smsc = M::mock(ClickSendApi::class, ['test', 'test', 'John_Doe']);
-        $this->channel = new ClickSendChannel($this->smsc);
-        $this->message = M::mock(ClickSendMessage::class);
+        $this->smsc = Mockery::mock(new ClickSendApi('username', 'APIKEY'));
+        $this->channel = new ClickSendChannel($this->smsc, new Dispatcher());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
-        M::close();
-
         parent::tearDown();
     }
 
     /** @test */
     public function it_can_send_a_notification()
     {
-        $this->smsc->shouldReceive('send')->once()
-            ->with(
-                [
-                    'phones'  => '+1234567890',
-                    'mes'     => 'hello',
-                    'sender'  => 'John_Doe',
-                ]
-            );
+        Http::fake([
+            '*' => Http::response([
+                'http_code' => 200,
+                'response_code' => 'SUCCESS',
+                'response_msg' => 'Here are you data.',
+                'data' => (object) [
+                    'messages' => [
+                        [
+                            'status' => 'SUCCESS',
+                            'message_id' => Str::uuid(),
+                        ],
+                    ],
+                ],
+            ]),
+        ]);
 
-        $this->channel->send(new TestNotifiable(), new TestNotification());
+        $response = $this->channel->send(
+            new TestNotifiable(), new TestNotification()
+        );
+        $this->assertTrue($response['success']);
     }
 
     /** @test */
-    public function it_does_not_send_a_message_when_to_missed()
+    public function it_can_send_a_notification_from_string()
     {
-        $this->expectException(CouldNotSendNotification::class);
+        Http::fake([
+            '*' => Http::response([
+                'http_code' => 200,
+                'response_code' => 'SUCCESS',
+                'response_msg' => 'Here are you data.',
+                'data' => (object) [
+                    'messages' => [
+                        [
+                            'status' => 'SUCCESS',
+                            'message_id' => Str::uuid(),
+                        ],
+                    ],
+                ],
+            ]),
+        ]);
 
-        $this->channel->send(
-            new TestNotifiableWithoutRouteNotificationForSmscru(), new TestNotification()
+        $response = $this->channel->send(
+            new TestNotifiable(), new TestNotificationWithStringMessage()
         );
+        $this->assertTrue($response['success']);
     }
 
     /** @test */
-    public function it_throws_exception_if_unexpected_object_passed_to_sendManySms()
+    public function it_can_throw_notification_error()
     {
-        $this->expectException(CouldNotSendNotification::class);
+        Http::fake([
+            '*' => Http::response([
+                'http_code' => 403,
+                'response_code' => 'ERROR',
+                'response_msg' => 'Here are you data.',
+                'data' => (object) [
+                    'messages' => [
+                        [
+                            'status' => 'ERROR',
+                            'message_id' => Str::uuid(),
 
-        $messages = [[(object)["to"] => "1234567890", "message" => "test"]];
+                        ],
+                    ],
+                ],
+            ]),
+        ]);
 
-        $this->smsc->sendManySms(
-            $messages
+        $response = $this->channel->send(
+            new TestNotifiable(), new TestNotificationWithStringMessage()
         );
+        $this->assertFalse($response['success']);
+    }
+
+    /** @test */
+    public function it_returns_failures_if_there_are_some()
+    {
+        Http::fake([
+            '*' => Http::response([
+                'http_code' => 200,
+                'response_code' => 'SUCCESS',
+                'response_msg' => 'Here are you data.',
+                'data' => (object) [
+                    'messages' => [
+                        [
+                            'status' => 'SUCCESS',
+                            'body' => 'testing message for success',
+                            'to' => '+61422222222',
+                            'message_id' => Str::uuid(),
+                        ],
+                        [
+                            'status' => 'FAILED',
+                            'body' => 'testing message for failure',
+                            'to' => '+61433333333',
+                            'message_id' => Str::uuid(),
+
+                        ],
+                    ],
+                ],
+            ]),
+        ]);
+
+        $messages[] = (new ClickSendMessage('testing message for success'))->to('+61422222222');
+        $messages[] = (new ClickSendMessage('testing message for failure'))->to('+61433333333');
+
+        $response = $this->smsc->sendManySms($messages);
+
+        $this->assertFalse($response['success']);
+        $this->assertEquals('testing message for failure', $response['failures']['FAILED'][0]->content);
+        $this->assertEquals('+61433333333', $response['failures']['FAILED'][0]->to);
+    }
+
+    /** @test */
+    public function it_returns_an_api_exception()
+    {
+        Http::fake([
+            '*' => Http::response([
+                'http_code' => 500,
+                'response_code' => 'EXCEPTION',
+                'response_msg' => 'Here are you data.',
+                'data' => (object) [
+                    'messages' => [
+                        [
+                            'status' => 'FAILED',
+                            'body' => 'testing message for failure',
+                            'to' => '+61433333333',
+                            'message_id' => Str::uuid(),
+
+                        ],
+                    ],
+                ],
+            ]),
+        ]);
+
+        $messages[] = (new ClickSendMessage('testing message for success'))->to('+61422222222');
+
+        $response = $this->smsc->sendManySms($messages);
+
+        $this->assertFalse($response['success']);
     }
 
     /** @test */
@@ -85,36 +191,75 @@ class ClickSendChannelTest extends \PHPUnit_Framework_TestCase
         $this->expectException(CouldNotSendNotification::class);
 
         $messages = [];
-        for($c=0;$c<1001;$c++){
+        for ($c = 0; $c < 1001; $c++) {
             $messages[] = new ClickSendMessage();
         }
-        
+
         $this->smsc->sendManySms(
             $messages
         );
+    }
+
+    /** @test */
+    public function it_throws_exception_if_message_length_exceeds_determined_length()
+    {
+        $this->expectException(CouldNotSendNotification::class);
+
+        $message = '';
+
+        while (strlen($message) < 1001) {
+            $message .= fake()->word();
+        }
+
+        $this->smsc->sendSms(
+            'Test suite',
+            '+61411111111',
+            $message
+        );
+    }
+
+    /** @test */
+    public function it_throws_exception_if_message_is_not_string_or_clicksend_message_object()
+    {
+        $this->expectException(CouldNotSendNotification::class);
+
+        $messages[] = new stdClass();
+
+        $this->smsc->sendManySms(
+            $messages
+        );
+
     }
 }
 
 class TestNotifiable
 {
-    public function routeNotificationFor()
+    public function routeNotificationForClicksend()
     {
-        return '+1234567890';
+        return '+61411111111';
     }
 }
 
 class TestNotifiableWithoutRouteNotificationForSmscru extends TestNotifiable
 {
-    public function routeNotificationFor()
+    public function routeNotificationForClicksend()
     {
         return false;
     }
 }
 
-class TestNotification extends Notification
+class TestNotification extends \Illuminate\Notifications\Notification
 {
     public function toClickSend()
     {
-        return ClickSendMessage::create('hello')->from('John_Doe');
+        return (new ClickSendMessage('messageContent'))->from('fromNumber');
+    }
+}
+
+class TestNotificationWithStringMessage extends \Illuminate\Notifications\Notification
+{
+    public function toClickSend()
+    {
+        return 'This is a message';
     }
 }

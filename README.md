@@ -1,6 +1,6 @@
-# ClickSend notifications channel for Laravel 5.1+
+# ClickSend notifications channel for Laravel 9.x
 
-This package makes it easy to send notifications using [clicksend.com](//clicksend.com) with Laravel 5.1+.
+This package makes it easy to send notifications using [clicksend.com](//clicksend.com) with Laravel 9.x.
 Uses ClickSend PHP API wrapper [https://github.com/ClickSend/clicksend-php]
 
 ## Contents
@@ -23,25 +23,12 @@ Install the package via composer:
 composer require jordanhavard/laravel-sms-clicksend
 ```
 
-Add the service provider to `config/app.php`:
-```php
-...
-'providers' => [
-    ...
-    NotificationChannels\ClickSend\ClickSendServiceProvider::class,
-],
-...
-```
+The package will be auto discovered.
 
-Add your ClickSend username, api_key and optional default sender sms_from to your `config/services.php`:
+Publish the `config/clicksend.php` configuration file using the command below
 
 ```php
-...
-'clicksend' => [
-	'username' => env('CLICKSEND_USERNAME'),
-	'api_key'  => env('CLICKSEND_API_KEY'),
-],
-...
+php artisan vendor:publish --provider="JordanHavard\ClickSend\ClickSendServiceProvider"
 ```
 
 ## Usage
@@ -52,8 +39,8 @@ Use ClickSendChannel in `via()` method inside your notification classes. Example
 namespace App\Notifications;
 
 use Illuminate\Notifications\Notification;
-use NotificationChannels\ClickSend\ClickSendMessage;
-use NotificationChannels\ClickSend\ClickSendChannel;
+use JordanHavard\ClickSend\ClickSendMessage;
+use JordanHavard\ClickSend\ClickSendChannel;
 
 class ClickSendTest extends Notification
 {
@@ -120,7 +107,7 @@ catch (\Exception $e) {
 }
 ```
 
-## Events
+## Events (Not yet implemented)
 Following events are triggered by Notification. By default:
 - Illuminate\Notifications\Events\NotificationSending
 - Illuminate\Notifications\Events\NotificationSent
@@ -138,7 +125,7 @@ use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
-use NotificationChannels\ClickSend\ClickSendChannel;
+use JordanHavard\ClickSend\ClickSendChannel;
 	
 class NotificationFailedListener
 {
@@ -203,7 +190,7 @@ protected $listen = [
 ```
 
 
-## API Client
+## API Client (not yet implemented)
 
 To access the rest of ClickSend API you can get client from ClickSendApi:
 ```php

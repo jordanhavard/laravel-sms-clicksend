@@ -1,55 +1,25 @@
 <?php
 
-namespace NotificationChannels\ClickSend\Exceptions;
+namespace JordanHavard\ClickSend\Exceptions;
 
 use Exception;
-use DomainException;
 
 class CouldNotSendNotification extends Exception
 {
     /**
-     * Thrown when content length is greater than 800 characters.
+     * Thrown when content length is greater than 1000 characters.
      *
      * @return static
      */
     public static function contentLengthLimitExceeded()
     {
         return new static(
-            'Notification was not sent. Content length may not be greater than 800 characters.'
+            'Notification was not sent. Content length may not be greater than 1000 characters.'
         );
     }
-
-    /**
-     * Thrown when mesage status is not SUCCESS
-     *
-     * @param  DomainException  $exception
-     *
-     * @return static
-     */
-    public static function clicksendRespondedWithAnError(DomainException $exception)
-    {
-        return new static(
-            "Notification Error: {$exception->getMessage()}"
-        );
-    }
-
-    /**
-     * Thrown when we're unable to communicate with Clicksend.com
-     *
-     * @param  Exception  $exception
-     *
-     * @return static
-     */
-    public static function couldNotCommunicateWithClicksend(Exception $exception)
-    {
-        return new static("Notification Gateway Error: {$exception->getReason()} [{$exception->getCode()}]");
-    }
-
 
     /**
      * Thrown when you try to send too many bulk SMS'. ClickSend API limits messages to 1000
-     *
-     * @param  Exception  $exception
      *
      * @return static
      */
@@ -61,12 +31,10 @@ class CouldNotSendNotification extends Exception
     /**
      * Thrown when you try to include an object that is not of Type ClickSendMessage to the $messages array of ClickSendApi::sendManySms(...)
      *
-     * @param  Exception  $exception
-     *
      * @return static
      */
     public static function notAClickSendMessageObject()
     {
-        return new static("Each message object must be of type NotificationChannels\ClickSend\ClickSendMessage");
+        return new static("Each message object must be of type JordanHavard\ClickSend\ClickSendMessage");
     }
 }
