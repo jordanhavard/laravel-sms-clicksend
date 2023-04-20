@@ -100,7 +100,7 @@ class ClickSendApi
                     }
                     $result['failures'][$message_response->status][] =
                         (new ClickSendMessage($message_response->body))
-                        ->to($message_response->to);
+                            ->to($message_response->to);
                 }
             }
             if ($worked == count($messages)) {
