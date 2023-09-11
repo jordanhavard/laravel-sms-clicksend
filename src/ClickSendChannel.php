@@ -31,7 +31,7 @@ class ClickSendChannel
 
         // always return object
         if (is_string($message)) {
-        $message = new ClickSendMessage($message);
+            $message = new ClickSendMessage($message);
         }
 
         // array [success, message, data]

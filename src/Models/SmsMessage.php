@@ -57,7 +57,7 @@ class SmsMessage
     public static function replaceNumber($number)
     {
         if (! self::whitelistEnabled()) {
-        return $number;
+            return $number;
         }
 
         return ! in_array($number, self::whitelistedNumbers())

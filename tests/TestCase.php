@@ -10,7 +10,7 @@ use JordanHavard\ClickSend\ClickSendServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-//    protected $enablesPackageDiscoveries = true;
+    //    protected $enablesPackageDiscoveries = true;
 
     /**
      * @var ClickSendApi

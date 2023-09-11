@@ -3,6 +3,7 @@
 namespace JordanHavard\ClickSend;
 
 use JordanHavard\ClickSend\Controllers\SMSController;
+use JordanHavard\ClickSend\Controllers\SubaccountController;
 
 class ClickSendClient extends \ClickSendLib\ClickSendClient
 {
@@ -24,5 +25,10 @@ class ClickSendClient extends \ClickSendLib\ClickSendClient
     public function getSMS()
     {
         return SMSController::getInstance();
+    }
+
+    public function getSubaccounts()
+    {
+        return SubaccountController::getInstance();
     }
 }

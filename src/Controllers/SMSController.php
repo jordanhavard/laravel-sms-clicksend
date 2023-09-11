@@ -22,7 +22,7 @@ class SMSController extends BaseController
      */
     public static function getInstance()
     {
-        if (null === static::$instance) {
+        if (static::$instance === null) {
             static::$instance = new static();
         }
 
