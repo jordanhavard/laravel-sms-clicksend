@@ -2,8 +2,9 @@
 
 namespace JordanHavard\ClickSend;
 
-use function config;
 use Illuminate\Support\ServiceProvider;
+
+use function config;
 
 class ClickSendServiceProvider extends ServiceProvider
 {

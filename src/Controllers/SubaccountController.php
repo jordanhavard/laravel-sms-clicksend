@@ -5,9 +5,8 @@ namespace JordanHavard\ClickSend\Controllers;
 use ClickSendLib\APIHelper;
 use ClickSendLib\Configuration;
 use Illuminate\Support\Facades\Http;
-use JordanHavard\ClickSend\Controllers\BaseController;
-use JordanHavard\ClickSend\Exceptions\APIException;
 use JordanHavard\ClickSend\ClickSendSubaccount;
+use JordanHavard\ClickSend\Exceptions\APIException;
 
 class SubaccountController extends BaseController
 {
@@ -23,7 +22,7 @@ class SubaccountController extends BaseController
      */
     public static function getInstance()
     {
-        if (null === static::$instance) {
+        if (static::$instance === null) {
             static::$instance = new static();
         }
 
@@ -35,7 +34,7 @@ class SubaccountController extends BaseController
      */
     public function create(ClickSendSubaccount $properties)
     {
-        if (!$properties->ready()) {
+        if (! $properties->ready()) {
             return false;
         }
         //the base uri for api requests
@@ -55,14 +54,15 @@ class SubaccountController extends BaseController
 
         $response = Http::withHeaders($_headers)
             ->withBasicAuth(Configuration::$username, Configuration::$key)
-            ->post($_queryUrl, (array)$properties);
+            ->post($_queryUrl, (array) $properties);
 
         $this->validateResponse($response->object());
 
         return $response->object();
     }
 
-    public function update(int $subaccount_id, ClickSendSubaccount $properties) {
+    public function update(int $subaccount_id, ClickSendSubaccount $properties)
+    {
         //the base uri for api requests
         $_queryBuilder = Configuration::$BASEURI;
 
@@ -80,19 +80,20 @@ class SubaccountController extends BaseController
 
         $response = Http::withHeaders($_headers)
             ->withBasicAuth(Configuration::$username, Configuration::$key)
-            ->put($_queryUrl, (array)$properties);
+            ->put($_queryUrl, (array) $properties);
 
         $this->validateResponse($response->object());
 
         return $response->object();
     }
 
-    public function delete(int $subaccount_id) {
+    public function delete(int $subaccount_id)
+    {
         //the base uri for api requests
         $_queryBuilder = Configuration::$BASEURI;
 
         //prepare query string for API call
-        $_queryBuilder = $_queryBuilder.'/subaccounts/' . $subaccount_id;
+        $_queryBuilder = $_queryBuilder.'/subaccounts/'.$subaccount_id;
 
         //validate and preprocess url
         $_queryUrl = APIHelper::cleanUrl($_queryBuilder);
@@ -112,7 +113,8 @@ class SubaccountController extends BaseController
         return $response->object();
     }
 
-    public function index(int $page=1,int $limit=15) {
+    public function index(int $page = 1, int $limit = 15)
+    {
 
         //the base uri for api requests
         $_queryBuilder = Configuration::$BASEURI;
@@ -138,7 +140,8 @@ class SubaccountController extends BaseController
         return $response->object();
     }
 
-    public function view(int $subaccountId) {
+    public function view(int $subaccountId)
+    {
 
         //the base uri for api requests
         $_queryBuilder = Configuration::$BASEURI;
@@ -164,12 +167,13 @@ class SubaccountController extends BaseController
         return $response->object();
     }
 
-    public function generate_new_api_key(int $subaccountId) {
+    public function generate_new_api_key(int $subaccountId)
+    {
         //the base uri for api requests
         $_queryBuilder = Configuration::$BASEURI;
 
         //prepare query string for API call
-        $_queryBuilder = $_queryBuilder.'/subaccounts/'.$subaccountId . '/regen-api-key';
+        $_queryBuilder = $_queryBuilder.'/subaccounts/'.$subaccountId.'/regen-api-key';
 
         //validate and preprocess url
         $_queryUrl = APIHelper::cleanUrl($_queryBuilder);
@@ -188,5 +192,4 @@ class SubaccountController extends BaseController
 
         return $response->object();
     }
-
 }
