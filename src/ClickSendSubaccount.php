@@ -26,6 +26,24 @@ class ClickSendSubaccount
 
     public $access_settings = 0;
 
+    public $access_sms = 1;
+
+    public $access_email = 1;
+
+    public $access_voice = 1;
+
+    public $access_fax = 1;
+
+    public $access_post = 1;
+
+    public $access_reseller = 1;
+
+    public $access_mms = 1;
+
+    public $share_campaigns = 0;
+
+    public $note = '';
+
     public function ready()
     {
         return ! (is_null($this->api_username) ||

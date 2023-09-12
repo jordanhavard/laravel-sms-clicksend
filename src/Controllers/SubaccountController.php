@@ -18,7 +18,7 @@ class SubaccountController extends BaseController
     /**
      * Returns the *Singleton* instance of this class.
      *
-     * @return SMSController The *Singleton* instance.
+     * @return SubaccountController The *Singleton* instance.
      */
     public static function getInstance()
     {
