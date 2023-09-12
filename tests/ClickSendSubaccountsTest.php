@@ -32,12 +32,12 @@ class ClickSendSubaccountsTest extends TestCase
 
         // create properties for new subaccount
         $properties = new ClickSendSubaccount();
-        $properties->email = 'new_account@yourdomain.com'; // must be unique in clicksend
-        $properties->api_username = 'test_youraccount1'; // must be unique in clicksend
-        $properties->password = 'Adfgdf@1314SDDSF2@#!dssadfas';
+        $properties->email = 'email@example.com';
+        $properties->api_username = 'api_username';
+        $properties->password = 'password';
         $properties->first_name = 'FirstName';
         $properties->last_name = 'LastName';
-        $properties->phone_number = '+61415111222';
+        $properties->phone_number = '+614xxxxxxxx';
 
         // send create request and run assertions
         $response = $this->client->getSubaccounts()->create($properties);
@@ -113,12 +113,12 @@ class ClickSendSubaccountsTest extends TestCase
         $subaccountId = 1234;
         // update the subaccount we created earlier
         $updatedProperties = new ClickSendSubaccount();
-        $updatedProperties->email = 'new_account1@yourdomain.com'; // must be unique in clicksend
-        $updatedProperties->api_username = 'test_youraccount2'; // must be unique in clicksend
-        $updatedProperties->password = 'Adfgdf@1314SDDSF2@#!dssadfas2';
-        $updatedProperties->first_name = 'FirstNameUpdated';
-        $updatedProperties->last_name = 'LastNameUpdated';
-        $updatedProperties->phone_number = '+61415333444';
+        $updatedProperties->email = 'updated@example.com'; // must be unique in clicksend
+        $updatedProperties->api_username = 'updated_api_username'; // must be unique in clicksend
+        $updatedProperties->password = 'updated_password';
+        $updatedProperties->first_name = 'UpdatedFirstName';
+        $updatedProperties->last_name = 'UpdatedLastName';
+        $updatedProperties->phone_number = '+61xxxxxxxxx';
 
         $response = $this->client->getSubaccounts()->update($subaccountId, $updatedProperties);
         $this->assertSame($response->http_code, 200);
