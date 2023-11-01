@@ -230,6 +230,36 @@ class ClickSendChannelTest extends TestCase
         );
 
     }
+
+    public function it_can_call_the_results_callback_method()
+    {
+        Http::fake([
+            '*' => Http::response([
+                'http_code' => 200,
+                'response_code' => 'SUCCESS',
+                'response_msg' => 'Here are you data.',
+                'data' => (object) [
+                    'messages' => [
+                        [
+                            'status' => 'SUCCESS',
+                            'message_id' => Str::uuid(),
+                        ],
+                    ],
+                ],
+            ]),
+        ]);
+
+
+        $notification = new TestNotificationWithResultCallback();
+        $this->assertFalse($notification->resultsCallbackWasCalled);
+        $response = $this->channel->send(
+            new TestNotifiable(), $notification
+        );
+        $this->assertTrue($response['success']);
+        $this->assertTrue($notification->resultsCallbackWasCalled);
+
+
+    }
 }
 
 class TestNotifiable
@@ -261,5 +291,18 @@ class TestNotificationWithStringMessage extends \Illuminate\Notifications\Notifi
     public function toClickSend()
     {
         return 'This is a message';
+    }
+}
+
+class TestNotificationWithResultCallback extends \Illuminate\Notifications\Notification
+{
+    public function toClickSend()
+    {
+        return (new ClickSendMessage('messageContent'))->from('fromNumber');
+    }
+
+    public $resultsCallbackWasCalled = false;
+    public function results($results) {
+        $this->resultsCallbackWasCalled = true;
     }
 }
