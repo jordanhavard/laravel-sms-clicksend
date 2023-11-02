@@ -8,6 +8,7 @@
 namespace JordanHavard\ClickSend;
 
 use Exception;
+use JordanHavard\ClickSend\Events\SmsRequestSent;
 use JordanHavard\ClickSend\Exceptions\APIException;
 use JordanHavard\ClickSend\Exceptions\CouldNotSendNotification;
 use JordanHavard\ClickSend\Models\SmsMessage;
@@ -71,6 +72,7 @@ class ClickSendApi
 
         try {
             $this->response = $this->client->getSMS()->sendSms($payload);
+            broadcast(new SmsRequestSent($this->response));
             // checked how many got through
             $worked = 0;
             foreach ($this->response->data->messages as $key => $message_response) {

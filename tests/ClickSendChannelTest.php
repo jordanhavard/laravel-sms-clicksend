@@ -8,10 +8,11 @@ use Illuminate\Support\Str;
 use JordanHavard\ClickSend\ClickSendApi;
 use JordanHavard\ClickSend\ClickSendChannel;
 use JordanHavard\ClickSend\ClickSendMessage;
+use JordanHavard\ClickSend\Events\SmsRequestSent;
 use JordanHavard\ClickSend\Exceptions\CouldNotSendNotification;
 use Mockery;
 use stdClass;
-
+use Illuminate\Support\Facades\Event;
 class ClickSendChannelTest extends TestCase
 {
     /**
@@ -60,11 +61,14 @@ class ClickSendChannelTest extends TestCase
                 ],
             ]),
         ]);
+        Event::fake();
 
         $response = $this->channel->send(
             new TestNotifiable(), new TestNotification()
         );
         $this->assertTrue($response['success']);
+
+        Event::assertDispatched(SmsRequestSent::class);
     }
 
     /** @test */
@@ -85,11 +89,13 @@ class ClickSendChannelTest extends TestCase
                 ],
             ]),
         ]);
+        Event::fake();
 
         $response = $this->channel->send(
             new TestNotifiable(), new TestNotificationWithStringMessage()
         );
         $this->assertTrue($response['success']);
+        Event::assertDispatched(SmsRequestSent::class);
     }
 
     /** @test */
@@ -111,11 +117,13 @@ class ClickSendChannelTest extends TestCase
                 ],
             ]),
         ]);
+        Event::fake();
 
         $response = $this->channel->send(
             new TestNotifiable(), new TestNotificationWithStringMessage()
         );
         $this->assertFalse($response['success']);
+        Event::assertNotDispatched(SmsRequestSent::class);
     }
 
     /** @test */
@@ -145,6 +153,7 @@ class ClickSendChannelTest extends TestCase
                 ],
             ]),
         ]);
+        Event::fake();
 
         $messages[] = (new ClickSendMessage('testing message for success'))->to('+61422222222');
         $messages[] = (new ClickSendMessage('testing message for failure'))->to('+61433333333');
@@ -154,6 +163,7 @@ class ClickSendChannelTest extends TestCase
         $this->assertFalse($response['success']);
         $this->assertEquals('testing message for failure', $response['failures']['FAILED'][0]->content);
         $this->assertEquals('+61433333333', $response['failures']['FAILED'][0]->to);
+        Event::assertDispatched(SmsRequestSent::class);
     }
 
     /** @test */
@@ -177,12 +187,14 @@ class ClickSendChannelTest extends TestCase
                 ],
             ]),
         ]);
+        Event::fake();
 
         $messages[] = (new ClickSendMessage('testing message for success'))->to('+61422222222');
 
         $response = $this->smsc->sendManySms($messages);
 
         $this->assertFalse($response['success']);
+        Event::assertNotDispatched(SmsRequestSent::class);
     }
 
     /** @test */
@@ -230,36 +242,6 @@ class ClickSendChannelTest extends TestCase
         );
 
     }
-
-    public function it_can_call_the_results_callback_method()
-    {
-        Http::fake([
-            '*' => Http::response([
-                'http_code' => 200,
-                'response_code' => 'SUCCESS',
-                'response_msg' => 'Here are you data.',
-                'data' => (object) [
-                    'messages' => [
-                        [
-                            'status' => 'SUCCESS',
-                            'message_id' => Str::uuid(),
-                        ],
-                    ],
-                ],
-            ]),
-        ]);
-
-
-        $notification = new TestNotificationWithResultCallback();
-        $this->assertFalse($notification->resultsCallbackWasCalled);
-        $response = $this->channel->send(
-            new TestNotifiable(), $notification
-        );
-        $this->assertTrue($response['success']);
-        $this->assertTrue($notification->resultsCallbackWasCalled);
-
-
-    }
 }
 
 class TestNotifiable
@@ -291,18 +273,5 @@ class TestNotificationWithStringMessage extends \Illuminate\Notifications\Notifi
     public function toClickSend()
     {
         return 'This is a message';
-    }
-}
-
-class TestNotificationWithResultCallback extends \Illuminate\Notifications\Notification
-{
-    public function toClickSend()
-    {
-        return (new ClickSendMessage('messageContent'))->from('fromNumber');
-    }
-
-    public $resultsCallbackWasCalled = false;
-    public function results($results) {
-        $this->resultsCallbackWasCalled = true;
     }
 }

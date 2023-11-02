@@ -48,9 +48,7 @@ class ClickSendChannel
             );
         }
 
-        if (method_exists($notification, 'result')) {
-            $notification->result($result);
-        }
+
 
         return $result;
     }
