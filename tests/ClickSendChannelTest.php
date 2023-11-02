@@ -8,10 +8,11 @@ use Illuminate\Support\Str;
 use JordanHavard\ClickSend\ClickSendApi;
 use JordanHavard\ClickSend\ClickSendChannel;
 use JordanHavard\ClickSend\ClickSendMessage;
+use JordanHavard\ClickSend\Events\SmsRequestSent;
 use JordanHavard\ClickSend\Exceptions\CouldNotSendNotification;
 use Mockery;
 use stdClass;
-
+use Illuminate\Support\Facades\Event;
 class ClickSendChannelTest extends TestCase
 {
     /**
@@ -60,11 +61,14 @@ class ClickSendChannelTest extends TestCase
                 ],
             ]),
         ]);
+        Event::fake();
 
         $response = $this->channel->send(
             new TestNotifiable(), new TestNotification()
         );
         $this->assertTrue($response['success']);
+
+        Event::assertDispatched(SmsRequestSent::class);
     }
 
     /** @test */
@@ -85,11 +89,13 @@ class ClickSendChannelTest extends TestCase
                 ],
             ]),
         ]);
+        Event::fake();
 
         $response = $this->channel->send(
             new TestNotifiable(), new TestNotificationWithStringMessage()
         );
         $this->assertTrue($response['success']);
+        Event::assertDispatched(SmsRequestSent::class);
     }
 
     /** @test */
@@ -111,11 +117,13 @@ class ClickSendChannelTest extends TestCase
                 ],
             ]),
         ]);
+        Event::fake();
 
         $response = $this->channel->send(
             new TestNotifiable(), new TestNotificationWithStringMessage()
         );
         $this->assertFalse($response['success']);
+        Event::assertNotDispatched(SmsRequestSent::class);
     }
 
     /** @test */
@@ -145,6 +153,7 @@ class ClickSendChannelTest extends TestCase
                 ],
             ]),
         ]);
+        Event::fake();
 
         $messages[] = (new ClickSendMessage('testing message for success'))->to('+61422222222');
         $messages[] = (new ClickSendMessage('testing message for failure'))->to('+61433333333');
@@ -154,6 +163,7 @@ class ClickSendChannelTest extends TestCase
         $this->assertFalse($response['success']);
         $this->assertEquals('testing message for failure', $response['failures']['FAILED'][0]->content);
         $this->assertEquals('+61433333333', $response['failures']['FAILED'][0]->to);
+        Event::assertDispatched(SmsRequestSent::class);
     }
 
     /** @test */
@@ -177,12 +187,14 @@ class ClickSendChannelTest extends TestCase
                 ],
             ]),
         ]);
+        Event::fake();
 
         $messages[] = (new ClickSendMessage('testing message for success'))->to('+61422222222');
 
         $response = $this->smsc->sendManySms($messages);
 
         $this->assertFalse($response['success']);
+        Event::assertNotDispatched(SmsRequestSent::class);
     }
 
     /** @test */

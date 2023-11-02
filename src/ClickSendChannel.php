@@ -4,6 +4,7 @@ namespace JordanHavard\ClickSend;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Notifications\Notification;
 
 class ClickSendChannel
@@ -38,12 +39,16 @@ class ClickSendChannel
         $result = $this->client->sendSms($message->from, $to, $message->content, $message->custom, $message->delay);
 
         if (empty($result['success'])) {
-
             $this->events->dispatch(
                 new NotificationFailed($notifiable, $notification, get_class($this), $result)
             );
-
+        } else {
+            $this->events->dispatch(
+                new NotificationSent($notifiable, $notification, get_class($this), $result)
+            );
         }
+
+
 
         return $result;
     }
