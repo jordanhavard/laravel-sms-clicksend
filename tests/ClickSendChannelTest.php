@@ -3,6 +3,7 @@
 namespace JordanHavard\ClickSend\Test;
 
 use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use JordanHavard\ClickSend\ClickSendApi;
@@ -12,7 +13,7 @@ use JordanHavard\ClickSend\Events\SmsRequestSent;
 use JordanHavard\ClickSend\Exceptions\CouldNotSendNotification;
 use Mockery;
 use stdClass;
-use Illuminate\Support\Facades\Event;
+
 class ClickSendChannelTest extends TestCase
 {
     /**

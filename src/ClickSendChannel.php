@@ -48,8 +48,6 @@ class ClickSendChannel
             );
         }
 
-
-
         return $result;
     }
 }

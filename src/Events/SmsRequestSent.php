@@ -1,9 +1,11 @@
 <?php
 
 namespace JordanHavard\ClickSend\Events;
+
+use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\InteractsWithSockets;
+
 class SmsRequestSent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
@@ -16,6 +18,4 @@ class SmsRequestSent
     public function __construct(public $data)
     {
     }
-
-
 }
