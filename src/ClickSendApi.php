@@ -76,11 +76,11 @@ class ClickSendApi
             // checked how many got through
             $worked = 0;
             foreach ($this->response->data->messages as $key => $message_response) {
+                $allMessages['messages'][$key]['api_response'] = $this->response->response_msg;
+                $allMessages['messages'][$key]['message_id'] = $message_response->message_id;
+
                 if ($message_response->status == 'SUCCESS') {
                     $worked++;
-
-                    $allMessages['messages'][$key]['api_response'] = $this->response->response_msg;
-                    $allMessages['messages'][$key]['message_id'] = $message_response->message_id;
 
                     if (SmsMessage::whitelistEnabled()) {
                         $allMessages['messages'][$key]['api_response'] = SmsMessage::whitelistMessage(
